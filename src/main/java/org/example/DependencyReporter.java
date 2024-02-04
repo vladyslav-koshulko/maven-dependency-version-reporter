@@ -1,14 +1,24 @@
 package org.example;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Parent;
 
-@Mojo(name = "report")
-public class DependencyReporter extends AbstractMojo {
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        System.out.println("Version reporter init");
+import java.util.List;
+
+public abstract class DependencyReporter {
+
+    protected String sourceLocation;
+
+
+    public DependencyReporter() {
+
     }
+
+    protected abstract Dependency getDependency(String groupId, String artifactId, String version);
+
+    public abstract List<Dependency> gDependencies();
+
+    public abstract String getLatestVersion(Dependency dependency);
+
+
 }

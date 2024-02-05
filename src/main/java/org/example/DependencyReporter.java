@@ -1,24 +1,11 @@
 package org.example;
 
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Parent;
 
 import java.util.List;
+import java.util.Map;
 
-public abstract class DependencyReporter {
+public interface DependencyReporter {
 
-    protected String sourceLocation;
-
-
-    public DependencyReporter() {
-
-    }
-
-    protected abstract Dependency getDependency(String groupId, String artifactId, String version);
-
-    public abstract List<Dependency> gDependencies();
-
-    public abstract String getLatestVersion(Dependency dependency);
-
-
+    Map<Dependency, List<Dependency>> getDependencyVersions();
 }

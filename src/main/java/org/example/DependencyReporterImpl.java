@@ -48,13 +48,13 @@ public class DependencyReporterImpl implements DependencyReporter {
     private Model loadPom() {
         MavenXpp3Reader loader = new MavenXpp3Reader();
         try {
-            return loader.read(handlePomLoading(loader));
+            return loader.read(getPom());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private FileReader handlePomLoading(MavenXpp3Reader loader) {
+    private FileReader getPom() {
         try {
             return new FileReader(POM);
         } catch (FileNotFoundException e) {

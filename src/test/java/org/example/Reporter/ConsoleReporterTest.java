@@ -55,7 +55,7 @@ class ConsoleReporterTest {
         return new PrintStream(new OutputStream() {
             @Override
             public void write(int b) {
-                buffer.append(b);
+                buffer.append((char) b);
             }
         });
     }

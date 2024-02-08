@@ -1,5 +1,8 @@
 package org.example;
 
+import java.io.File;
+import java.nio.file.Path;
+import javax.management.modelmbean.XMLParseException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -15,7 +18,7 @@ import java.util.stream.Collectors;
 public class DependencyReporterImpl implements DependencyReporter {
     private String repo;
 
-    private static final String POM = "pom.xml";
+    private static final String POM = "./pom.xml";
 
 
     public DependencyReporterImpl(String repo) {
@@ -47,16 +50,18 @@ public class DependencyReporterImpl implements DependencyReporter {
 
     private Model loadPom() {
         MavenXpp3Reader loader = new MavenXpp3Reader();
-        try {
-            return loader.read(getPom());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+            System.out.println(Path.of("."));
+//            return loader.read(getPom());
+            return null;
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
-    private FileReader getPom() {
+    private FileReader getPom() throws XMLParseException {
         try {
-            return new FileReader(POM);
+            return new FileReader(new File(POM));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.repository;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;

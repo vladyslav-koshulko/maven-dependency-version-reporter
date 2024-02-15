@@ -1,13 +1,13 @@
 package org.example;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import javax.management.modelmbean.XMLParseException;
+
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DependencyReporterImpl implements DependencyReporter {
-    private String repo;
+    private final String repo;
 
     private static final String POM = "./pom.xml";
 
@@ -27,41 +27,35 @@ public class DependencyReporterImpl implements DependencyReporter {
 
     @Override
     public Map<Dependency, List<Dependency>> getDependencyVersions() {
-        Model model = loadPom();
-        Map<Dependency, List<Dependency>> dependencyListMap = extractDependencies(model);
-        return null;
+        return extractDependencies(loadPom());
     }
-
-//    private Map<Dependency, List<Dependency>> loadDependenciesData() {
-//
-//    }
 
 
     private Map<Dependency, List<Dependency>> extractDependencies(Model model) {
-        List<Dependency> dependencies = model.getDependencies();
-        if (dependencies == null) {
-            dependencies = new ArrayList<>();
-        }
-        return dependencies.stream().collect(Collectors.toMap(
+        return getNewListIfNull(model.getDependencies()).stream()
+                .collect(Collectors.toMap(
                 dependency -> dependency,
                 dependency -> List.of()));
+    }
+
+    private List<Dependency> getNewListIfNull(List<Dependency> dependencies) {
+        return dependencies != null ? dependencies : new ArrayList<>();
     }
 
 
     private Model loadPom() {
         MavenXpp3Reader loader = new MavenXpp3Reader();
-//        try {
+        try {
             System.out.println(Path.of("."));
-//            return loader.read(getPom());
-            return null;
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+            return loader.read(getPom());
+        } catch (IOException | XmlPullParserException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private FileReader getPom() throws XMLParseException {
+    private FileReader getPom() {
         try {
-            return new FileReader(new File(POM));
+            return new FileReader(POM);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

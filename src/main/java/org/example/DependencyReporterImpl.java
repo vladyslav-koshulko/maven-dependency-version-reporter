@@ -12,34 +12,30 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class DependencyReporterImpl implements DependencyReporter {
-    private final String repo;
 
-    private static final String POM = "./pom.xml";
+    protected String defaultPomPath = "./pom.xml";
+    private final String pomPath;
 
 
-    public DependencyReporterImpl(String repo) {
-        this.repo = repo;
+    public DependencyReporterImpl(String pomPath) {
+        this.pomPath = pomPath;
+    }
+
+    public DependencyReporterImpl() {
+        this.pomPath = this.defaultPomPath;
     }
 
     @Override
-    public Map<Dependency, List<Dependency>> getDependencyVersions() {
-        return extractDependencies(loadPom());
+    public List<Dependency> getDependencyVersions() {
+        Model model = loadPom();
+        return extractDependencies(model);
     }
 
 
-    private Map<Dependency, List<Dependency>> extractDependencies(Model model) {
-        return getNewListIfNull(model.getDependencies()).stream()
-                .collect(Collectors.toMap(
-                dependency -> dependency,
-                dependency -> List.of()));
-    }
-
-    private List<Dependency> getNewListIfNull(List<Dependency> dependencies) {
-        return dependencies != null ? dependencies : new ArrayList<>();
+    private List<Dependency> extractDependencies(Model model) {
+        return new ArrayList<>(model.getDependencies());
     }
 
 
@@ -47,19 +43,17 @@ public class DependencyReporterImpl implements DependencyReporter {
         MavenXpp3Reader loader = new MavenXpp3Reader();
         try {
             System.out.println(Path.of("."));
-            return loader.read(getPom());
+            return loader.read(getPomPath());
         } catch (IOException | XmlPullParserException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private FileReader getPom() {
+    private FileReader getPomPath() {
         try {
-            return new FileReader(POM);
+            return new FileReader(pomPath);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
-
-
 }
